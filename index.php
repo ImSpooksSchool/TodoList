@@ -1,4 +1,5 @@
 <?php
+require_once "template/header.php";
 
 use handlers\ContentHandler;
 use objects\TodoItem;
@@ -11,10 +12,8 @@ require_once(ROOT . "handlers/ContentHandler.php");
 ContentHandler::getInstance()->route();
 
 $obj = new TodoList("Test", [new TodoItem("Title", "Desc", TodoStatus::NOT_STARTED())]);
-echo json_encode($obj->serialize()) . "\n";
-
-
-require_once "template/header.php"; ?>
+//echo json_encode($obj->serialize()) . "\n";
+?>
 
 
 
