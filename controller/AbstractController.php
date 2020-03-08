@@ -7,8 +7,9 @@
 namespace controller;
 
 use handlers\ConnectionHandler;
+use view\init\IVieuw;
 
-abstract class IController {
+abstract class AbstractController {
 
     protected ConnectionHandler $connectionHandler;
     public function __construct() {
@@ -28,5 +29,15 @@ abstract class IController {
 
     public abstract function index(array $data): bool;
 
+    public function render($file, $account, $data): void {
+        /** @var $view IVieuw */
 
+        require_once ROOT . "view/template/header.php";
+
+        $class = ROOT . "view/" . $file . ".php";
+        $view = new $class();
+        $view->render($data);
+
+        require_once ROOT . "view/template/footer.php";
+    }
 }

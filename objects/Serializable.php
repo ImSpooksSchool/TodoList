@@ -9,5 +9,5 @@ namespace objects;
 interface Serializable {
 
     public function serialize(): array;
-    public static function deserialize(string $input): self;
+    public static function deserialize(array $input): self;
 }

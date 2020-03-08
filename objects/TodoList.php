@@ -31,7 +31,14 @@ class TodoList implements Serializable {
         return $data;
     }
 
-    public static function deserialize(string $input): TodoList {
-        $json = json_decode($input);
+    public static function deserialize(array $input): TodoList {
+        $title = $input["title"];
+
+        $items = [];
+        foreach ($input["items"] as $item) {
+            array_push($items, TodoItem::deserialize($item));
+        }
+
+        return new TodoList($title, $items);
     }
 }

@@ -74,8 +74,8 @@ class TodoItem implements Serializable {
         return $data;
     }
 
-    public static function deserialize(string $input): TodoItem {
-        return null;
+    public static function deserialize(array $input): TodoItem {
+        return new TodoItem($input["title"], $input["description"], TodoStatus::getFromId($input["status"]));
     }
 
 

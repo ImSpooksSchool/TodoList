@@ -6,7 +6,7 @@
 
 namespace controller;
 
-class MainController extends IController {
+class MainController extends AbstractController {
 
     public function __construct() {
         parent::__construct();

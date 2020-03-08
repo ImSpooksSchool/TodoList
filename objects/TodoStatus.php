@@ -17,4 +17,13 @@ class TodoStatus extends Enum {
     const NOT_STARTED = 0;
     const STARTED = 1;
     const FINISHED = 2;
+
+    public static function getFromId(int $id): TodoStatus {
+        foreach (self::toArray() as $name => $value) {
+            if ($id === $value) {
+                return self::$name();
+            }
+        }
+        return self::NOT_STARTED();
+    }
 }

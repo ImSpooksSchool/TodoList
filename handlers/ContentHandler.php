@@ -6,8 +6,7 @@
 
 namespace handlers;
 
-use controller\IController;
-use controller\MainController;
+use controller\AbstractController;
 
 class ContentHandler {
 
@@ -25,6 +24,7 @@ class ContentHandler {
             require_once(ROOT . "objects/TodoStatus.php");
             require_once(ROOT . "objects/TodoItem.php");
             require_once(ROOT . "objects/TodoList.php");
+            require_once(ROOT . "objects/Account.php");
 
         }
         return self::$instance;
@@ -39,9 +39,15 @@ class ContentHandler {
             $url["action"] = isset($tmp_url[1]) ? $tmp_url[1] : "index";
             unset($tmp_url[0], $tmp_url[1]);
             $url["args"] = array_values($tmp_url);
-        }
-        else {
+        } else {
             $url["controller"] = "MainController";
+            $url["action"] = "index";
+            $url["args"] = [];
+        }
+
+        // If account is not set
+        if (!isset($_SESSION["account"])) {
+            $url["controller"] = "LoginController";
             $url["action"] = "index";
             $url["args"] = [];
         }
@@ -50,13 +56,13 @@ class ContentHandler {
 
         if ($url != null && isset($url["controller"])) {
             if (file_exists(ROOT . "/controller/" . $url["controller"] . ".php")) {
-                require_once(ROOT . "/controller/IController.php");
+                require_once(ROOT . "/controller/AbstractController.php");
                 require_once(ROOT . "/controller/" . $url["controller"] . ".php");
 
                 echo "controller = " . $url["controller"] . "<br>";
-                $url["controller"] = "controller\\" .  $url["controller"];
+                $url["controller"] = "controller\\" . $url["controller"];
 
-                /** @var IController $instance */
+                /** @var AbstractController $instance */
                 $instance = new $url["controller"]();
 
                 if ($instance->generateContent($instance, strtolower($url["action"]), $url["args"])) {
