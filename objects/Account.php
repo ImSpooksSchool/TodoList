@@ -13,13 +13,13 @@ class Account implements Serializable {
     private string $name;
     private string $email;
     private array $todoLists;
-    private string $message = "";
 
     /**
      * Account constructor.
      * @param int $id
      * @param string $name
      * @param string $email
+     * @param array $todoList
      */
     public function __construct(int $id, string $name, string $email, array $todoList) {
         $this->id = $id;
@@ -44,12 +44,10 @@ class Account implements Serializable {
         }
 
         $data["todoLists"] = $todoLists;
-
-        $data["message"] = $this->message;
         return $data;
     }
 
-    public static function deserialize(array $input): Serializable {
+    public static function deserialize(array $input): Account {
         $id = $input["id"];
         $name = $input["name"];
         $email = $input["email"];
@@ -59,9 +57,7 @@ class Account implements Serializable {
             array_push($todoLists, TodoList::deserialize($item));
         }
 
-        $account = new Account($id, $name, $email, $todoLists);
-        $account->setMessage($input["message"]);
-        return $account;
+        return new Account($id, $name, $email, $todoLists);
     }
 
     public function getId(): int {
@@ -76,14 +72,6 @@ class Account implements Serializable {
         return $this->email;
     }
 
-    public function getMessage(): string {
-        return $this->message;
-    }
-
-    public function setMessage(string $message): void {
-        $this->message = $message;
-    }
-
     public function getTodoLists(): array {
         return $this->todoLists;
     }
@@ -91,4 +79,14 @@ class Account implements Serializable {
     public function setTodoLists(array $todoLists): void {
         $this->todoLists = $todoLists;
     }
+
+    public function updateSession(): void {
+        $_SESSION["account"] = self::serialize();
+    }
+
+    public function isValid(): bool {
+        return $this->id != -1;
+    }
+
+
 }

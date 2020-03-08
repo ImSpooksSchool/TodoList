@@ -26,4 +26,10 @@ class TodoStatus extends Enum {
         }
         return self::NOT_STARTED();
     }
+
+
+    function __autoload($class_name) {
+        require_once('classes/'.$class_name.'.class.php');
+    }
+
 }

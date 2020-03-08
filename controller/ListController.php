@@ -6,14 +6,14 @@
 
 namespace controller;
 
-class MainController extends AbstractController {
+class ListController extends AbstractController {
 
     public function __construct() {
         parent::__construct();
     }
 
     public function index(array $data): bool {
-        echo json_encode($this->connectionHandler->sendQuery("SELECT * FROM members WHERE id=:id", ["id" => 1])) . "<br>";
+
         return true;
     }
 

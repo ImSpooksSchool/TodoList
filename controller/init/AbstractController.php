@@ -7,13 +7,22 @@
 namespace controller;
 
 use handlers\ConnectionHandler;
-use view\init\IVieuw;
+use objects\Account;
+use view\init\AbstractView;
 
 abstract class AbstractController {
 
+
     protected ConnectionHandler $connectionHandler;
+    protected Account $account;
     public function __construct() {
         $this->connectionHandler = new ConnectionHandler("localhost", "todolist", "php", "3cpTo9ctDX0HZU2g");
+
+        if (isset($_SESSION["account"])) {
+            $this->account = Account::deserialize($_SESSION["account"]);
+        } else {
+            $this->account = new Account(-1, "", "", []);
+        }
     }
 
 
@@ -29,14 +38,16 @@ abstract class AbstractController {
 
     public abstract function index(array $data): bool;
 
-    public function render($file, $account, $data): void {
-        /** @var $view IVieuw */
+    public function render(string $folder, String $className, Account $account, $data): void {
+        /** @var $view AbstractView */
+
 
         require_once ROOT . "view/template/header.php";
 
-        $class = ROOT . "view/" . $file . ".php";
+        $class = "view\\" . str_replace("/", "\\", $folder) . "\\" . $className;
+        require_once ROOT . $class . ".php";
         $view = new $class();
-        $view->render($data);
+        $view->render($account, $data, $this->connectionHandler);
 
         require_once ROOT . "view/template/footer.php";
     }

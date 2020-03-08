@@ -7,13 +7,15 @@
 namespace handlers;
 
 use PDO;
+use PDOException;
+use PDOStatement;
 
 class ConnectionHandler {
 
     private PDO $connection;
 
     public function __construct(string $host, string $db_name, string $user, string $password) {
-        $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING);
+        $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 
         $this->connection = new PDO(sprintf("mysql:host=%s;dbname=%s;charset=%s", $host, $db_name, "utf8"), $user, $password, $options);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -26,14 +28,16 @@ class ConnectionHandler {
         return $this->connection;
     }
 
-    public function sendQuery(string $query, array $params): array {
-        $stmt = $this->connection->prepare($query);
+    public function sendQuery(string $query, array $params = []): PDOStatement {
 
-        foreach ($params as $key => $value) {
-            $stmt->bindParam(":" . $key, $value);
+        try {
+            $stmt = $this->connection->prepare($query);
+            $stmt->execute($params);
+            return $stmt;
+        } catch (PDOException $e) {
+            var_dump($query);
+            var_dump($params);
+            throw $e;
         }
-
-        $stmt->execute();
-        return $stmt->fetchAll();
     }
 }
