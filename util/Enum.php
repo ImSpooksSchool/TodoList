@@ -108,7 +108,7 @@ abstract class Enum implements \JsonSerializable {
      * Returns the names (keys) of all constants in the Enum class
      *
      * @psalm-pure
-     * @psalm-return list<string>
+     * @psalm-return todolist<string>
      * @return array
      */
     public static function keys() {

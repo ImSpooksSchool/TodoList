@@ -8,26 +8,25 @@
 namespace view\init;
 
 
-use handlers\ConnectionHandler;
 use objects\Account;
 
 abstract class AbstractView {
 
-    protected $messages = ["success" => [], "error" => []];
+    protected $messages = ["success" => [], "warning" => []];
 
-    public abstract function render(Account $account, array $data, ConnectionHandler $connectionHandler): void;
+    public abstract function render(Account $account, array $data): void;
 
     public function updateMessages(): void {
         $_SESSION["msg"] = $this->messages;
     }
 
-    public function addError(string $error, bool $boolean = true) {
+    public function addWarning(string $error, bool $boolean = true) {
         if ($boolean)
-            array_push($this->messages["error"], $error);
+            array_push($this->messages["warning"], $error);
     }
 
-    public function getErrors(): array {
-        return $this->messages["error"];
+    public function getWarnings(): array {
+        return $this->messages["warning"];
     }
 
     public function addSuccess(string $succes, bool $boolean = true) {

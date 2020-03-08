@@ -12,7 +12,17 @@ use PDOStatement;
 
 class ConnectionHandler {
 
-    private PDO $connection;
+    private static bool $initialized = false;
+    private static ConnectionHandler $instance;
+
+
+    public static function getInstance(): ConnectionHandler {
+        if (!self::$initialized) {
+            self::$instance = new self("localhost", "todolist", "php", "3cpTo9ctDX0HZU2g");
+            self::$initialized = true;
+        }
+        return self::$instance;
+    }
 
     public function __construct(string $host, string $db_name, string $user, string $password) {
         $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);

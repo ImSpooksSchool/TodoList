@@ -7,6 +7,7 @@
 namespace handlers;
 
 use controller\AbstractController;
+use Error;
 
 class ContentHandler {
 
@@ -32,16 +33,16 @@ class ContentHandler {
         return self::$instance;
     }
 
-    public function route() {
+    public function route(string $data = "") {
         $url = [];
-        if (isset($_GET["redirect"])) {
-            $tmp_url = explode("/", trim(filter_var($_GET["redirect"], FILTER_SANITIZE_URL), "/"));
-            $url["controller"] = isset($tmp_url[0]) ? ucwords($tmp_url[0] . "Controller") : "ListController";
+        if (isset($data) && strlen($data) > 0) {
+            $tmp_url = explode("/", trim(filter_var($data, FILTER_SANITIZE_URL), "/"));
+            $url["controller"] = isset($tmp_url[0]) ? ucwords($tmp_url[0] . "Controller") : "TodoListController";
             $url["action"] = isset($tmp_url[1]) ? $tmp_url[1] : "index";
             unset($tmp_url[0], $tmp_url[1]);
             $url["args"] = array_values($tmp_url);
         } else {
-            $url["controller"] = "ListController";
+            $url["controller"] = "TodoListController";
             $url["action"] = "index";
             $url["args"] = [];
         }
@@ -64,8 +65,13 @@ class ContentHandler {
                 /** @var AbstractController $instance */
                 $instance = new $url["controller"]();
 
-                if ($instance->generateContent($instance, strtolower($url["action"]), $url["args"])) {
-                    return;
+                try {
+                    if ($instance->generateContent($instance, strtolower($url["action"]), $url["args"])) {
+                        return;
+                    }
+                } catch (Error $e) {
+                    throw $e;
+                    //TODO method not found
                 }
             }
         }

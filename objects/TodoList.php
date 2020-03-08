@@ -17,6 +17,47 @@ class TodoList implements Serializable {
         $this->title = $title;
     }
 
+    public function getTitle(): string {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void {
+        $this->title = $title;
+    }
+
+    public function getItems(): array {
+        return $this->items;
+    }
+
+    public function getSerializedItems(): array {
+        $todoLists = [];
+        /** @var $list TodoItem*/
+        foreach ($this->items as $list) {
+            array_push($todoLists, $list->serialize());
+        }
+        return $todoLists;
+    }
+
+    public function addItem(TodoItem $todoList): void {
+        array_push($this->items, $todoList);
+    }
+
+    public function removeItem(TodoItem $todoList): void {
+        if (in_array($todoList, $this->items)) {
+            unset($this->items[array_search($todoList, $this->items)]);
+        }
+    }
+
+    public function hasItem(string $name): bool {
+        /** @var $todoItem TodoItem*/
+        foreach ($this->items as $todoItem) {
+            if (strtolower($todoItem->getTitle()) === strtolower($name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function serialize(): array {
         $data = [];
 

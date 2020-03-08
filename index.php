@@ -14,14 +14,7 @@ define('URL', URL_PROTOCOL . URL_DOMAIN . URL_SUB_FOLDER); // Dit genereerd de s
 
 require_once(ROOT . "handlers/ContentHandler.php");
 
-ContentHandler::getInstance()->route();
-
-/*$obj = new Account(0, "Nick", "nickversluis446@gmail.com", [new TodoList("Test", [new TodoItem("Title", "Desc", TodoStatus::NOT_STARTED())])]);
-echo json_encode($obj->serialize()) . "\n<br>";
-
-$deserialized = Account::deserialize($obj->serialize());
-echo json_encode($deserialized->serialize()) . "\n<br>";
-
-echo URL;*/
+if (isset($_GET["redirect"]))  ContentHandler::getInstance()->route($_GET["redirect"]);
+else ContentHandler::getInstance()->route("");
 ?>
 

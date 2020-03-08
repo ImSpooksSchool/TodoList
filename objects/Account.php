@@ -7,6 +7,8 @@
 namespace objects;
 
 
+use handlers\ConnectionHandler;
+
 class Account implements Serializable {
 
     private int $id;
@@ -76,12 +78,42 @@ class Account implements Serializable {
         return $this->todoLists;
     }
 
-    public function setTodoLists(array $todoLists): void {
-        $this->todoLists = $todoLists;
+    public function getSerializedTodoLists(): array {
+        $todoLists = [];
+        /** @var $list TodoList*/
+        foreach ($this->todoLists as $list) {
+            array_push($todoLists, $list->serialize());
+        }
+        return $todoLists;
     }
 
-    public function updateSession(): void {
+    public function addTodoList(TodoList $todoList): void {
+        array_push($this->todoLists, $todoList);
+    }
+
+    public function removeTodoLists(TodoList $todoList): void {
+        if (in_array($todoList, $this->todoLists)) {
+            unset($this->todoLists[array_search($todoList, $this->todoLists)]);
+        }
+    }
+
+    public function hasTodoList(string $name): bool {
+        /** @var $todoList TodoList*/
+        foreach ($this->todoLists as $todoList) {
+            if (strtolower($todoList->getTitle()) === strtolower($name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function update(): void {
         $_SESSION["account"] = self::serialize();
+
+        ConnectionHandler::getInstance()->sendQuery("UPDATE user SET todoLists=:todoLists WHERE id=:id", [
+            "todoLists" => json_encode($this->getSerializedTodoLists()),
+            "id" => $this->getId()
+        ]);
     }
 
     public function isValid(): bool {
