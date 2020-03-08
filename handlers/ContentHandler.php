@@ -71,7 +71,6 @@ class ContentHandler {
                     }
                 } catch (Error $e) {
                     throw $e;
-                    //TODO method not found
                 }
             }
         }

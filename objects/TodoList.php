@@ -29,6 +29,10 @@ class TodoList implements Serializable {
         return $this->items;
     }
 
+    public function setItems(array $items): void {
+        $this->items = $items;
+    }
+
     public function getSerializedItems(): array {
         $todoLists = [];
         /** @var $list TodoItem*/

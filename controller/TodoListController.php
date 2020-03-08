@@ -15,6 +15,11 @@ class TodoListController extends AbstractController {
         return true;
     }
 
+    public function list(array $data): bool {
+        $this->index($data);
+        return true;
+    }
+
     public function add(array $data): bool {
         $this->render("todolist", "ListAdd", $data);
         return true;

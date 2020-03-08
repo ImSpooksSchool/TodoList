@@ -5,6 +5,7 @@ namespace view\todolist;
 use objects\Account;
 use objects\TodoItem;
 use objects\TodoList;
+use objects\TodoStatus;
 use view\init\AbstractView;
 
 /**
@@ -19,6 +20,16 @@ class ListView extends AbstractView {
         /** @var TodoList $todoList */
         /** @var TodoItem $item */
 
+        $sortStatus = -1;
+
+        if (count($data) > 0) {
+            switch ($data[0]) {
+                case "status": {
+                    $sortStatus = intval($data[1]);
+                }
+            }
+        }
+
         for ($sub = 0; $sub < count($account->getTodoLists()); $sub += 3) {
             ?>
             <div class="row">
@@ -27,6 +38,20 @@ class ListView extends AbstractView {
                 if (count($account->getTodoLists()) > $sub + $i) {
                     $todoList = $account->getTodoLists()[$sub + $i];
 
+                    {
+                        $tmp = [];
+
+                        foreach ($todoList->getItems() as $item) {
+                            foreach (TodoStatus::values() as $value) {
+                                if ($item->getStatus()->getValue() == $value->getValue()) {
+                                    array_push($tmp, $item);
+                                }
+                            }
+                        }
+
+                        $todoList->setItems($tmp);
+                    }
+
                     ?>
                     <div class="col-sm container card">
                         <h5 class=" card-title"><?=$todoList->getTitle()?></h5>
@@ -34,6 +59,10 @@ class ListView extends AbstractView {
                         <?php
                         for ($j = 0; $j < count($todoList->getItems()); $j++) {
                             $item = $todoList->getItems()[$j];
+
+                            if ($sortStatus != -1 && $item->getStatus()->getValue() != $sortStatus)
+                                continue;
+
                             ?>
                             <details class="card-body border rounded">
                                 <summary class="card-title"><?=$item->getTitle()?></summary>
@@ -62,6 +91,11 @@ class ListView extends AbstractView {
         }
         ?>
         <a href="<?= URL ?>/todolist/add" class="col-sm btn btn-primary">Add list</a>
+        <div id="row">
+            <a href="<?= URL ?>/todolist/list/status/0" class="col-sm btn btn-primary">Show not started</a>
+            <a href="<?= URL ?>/todolist/list/status/1" class="col-sm btn btn-primary">Show started</a>
+            <a href="<?= URL ?>/todolist/list/status/2" class="col-sm btn btn-primary">Show finished</a>
+        </div>
         <?php
     }
 }
